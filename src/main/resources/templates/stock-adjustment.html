@@ -53,12 +53,21 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="/stock/adjustment">Stock Adjustment</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
             </ul>
         </div>
     </div>
 </nav>
 
 <div class="container mt-5">
+    <!-- Error Message -->
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+        <span th:text="${errorMessage}">Error Message</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
     <div class="row">
         <div class="col-md-8">
             <div class="card shadow">
@@ -104,6 +113,9 @@
                         <button type="submit" class="btn btn-primary">
                             Process Stock Adjustment
                         </button>
+                        <a href="/stock/overview" class="btn btn-secondary">
+                            Back to Overview
+                        </a>
                     </form>
                 </div>
             </div>
@@ -129,6 +141,9 @@
                                 Stock Level
                             </td>
                         </tr>
+                        <tr th:if="${stockStatus.isEmpty()}">
+                            <td colspan="2" class="text-center">No stock data available</td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -150,6 +165,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="/stock/overview" class="btn btn-primary">View Stock Overview</a>
             </div>
         </div>
     </div>

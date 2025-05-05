@@ -20,14 +20,47 @@
             font-weight: bold;
             color: #5290AD;
         }
+        .btn-primary {
+            background-color: #5290AD;
+            border-color: #5290AD;
+        }
+        .btn-danger {
+            background-color: #d9534f;
+            border-color: #d9534f;
+        }
+        .detail-value {
+            font-size: 1.1rem;
+        }
+        .detail-section {
+            padding: 0.75rem;
+            border-radius: 0.25rem;
+            background-color: rgba(82, 144, 173, 0.05);
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
         <a class="navbar-brand" href="#">Inventory System</a>
-        <div class="navbar-nav">
-            <a class="nav-link" href="/stock/overview">Back to Overview</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/stock/entry">Stock Entry</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/stock/overview">Stock Overview</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/stock/adjustment">Stock Adjustment</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+            </ul>
         </div>
     </div>
 </nav>
@@ -36,69 +69,105 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h3 class="mb-0">Transaction Details</h3>
+                    <a href="/stock/overview" class="btn btn-light btn-sm">Back to Overview</a>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <span class="detail-label">Transaction ID:</span>
-                            <span th:text="${transaction.id}">Transaction ID</span>
-                        </div>
-                        <div class="col-md-6">
-                            <span class="detail-label">Transaction Date:</span>
-                            <span th:text="${transaction.transactionDate}">Transaction Date</span>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <span class="detail-label">Product ID:</span>
-                            <span th:text="${transaction.productId}">Product ID</span>
-                        </div>
-                        <div class="col-md-6">
-                            <span class="detail-label">Product Name:</span>
-                            <span th:text="${transaction.productName}">Product Name</span>
+                    <div class="detail-section">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <span class="detail-label">Transaction ID:</span>
+                                <div class="detail-value" th:text="${transaction.id}">Transaction ID</div>
+                            </div>
+                            <div class="col-md-6">
+                                <span class="detail-label">Transaction Date:</span>
+                                <div class="detail-value" th:text="${#temporals.format(transaction.transactionDate, 'yyyy-MM-dd HH:mm:ss')}">Transaction Date</div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <span class="detail-label">Quantity:</span>
-                            <span th:text="${transaction.quantity}">Quantity</span>
-                        </div>
-                        <div class="col-md-6">
-                            <span class="detail-label">Transaction Type:</span>
-                            <span th:text="${transaction.transactionType}">Transaction Type</span>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <span class="detail-label">User ID:</span>
-                            <span th:text="${transaction.userId}">User ID</span>
+                    <div class="detail-section">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <span class="detail-label">Product ID:</span>
+                                <div class="detail-value" th:text="${transaction.productId}">Product ID</div>
+                            </div>
+                            <div class="col-md-6">
+                                <span class="detail-label">Product Name:</span>
+                                <div class="detail-value" th:text="${transaction.productName}">Product Name</div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <span class="detail-label">Notes:</span>
-                        <p th:text="${transaction.notes ?: 'No additional notes'}">Notes</p>
+                    <div class="detail-section">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <span class="detail-label">Quantity:</span>
+                                <div class="detail-value" th:text="${transaction.quantity}">Quantity</div>
+                            </div>
+                            <div class="col-md-6">
+                                <span class="detail-label">Transaction Type:</span>
+                                <div class="detail-value">
+                                    <span class="badge"
+                                          th:classappend="${
+                                            transaction.transactionType.name() == 'STOCK_IN' ? 'bg-success' :
+                                            transaction.transactionType.name() == 'STOCK_OUT' ? 'bg-danger' :
+                                            'bg-warning'}"
+                                          th:text="${transaction.transactionType}">
+                                        Transaction Type
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="d-flex justify-content-between">
+                    <div class="detail-section">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <span class="detail-label">User ID:</span>
+                                <div class="detail-value" th:text="${transaction.userId}">User ID</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="mb-3">
+                            <span class="detail-label">Notes:</span>
+                            <div class="detail-value mt-2">
+                                <p th:text="${transaction.notes ?: 'No additional notes'}"
+                                   class="mb-0 fst-italic">Notes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
                         <a th:href="@{/stock/edit/{id}(id=${transaction.id})}"
                            class="btn btn-primary">Edit Transaction</a>
-                        <a th:href="@{/stock/delete/{id}(id=${transaction.id})}"
-                           class="btn btn-danger"
-                           onclick="return confirm('Are you sure you want to delete this transaction?')">
-                            Delete Transaction
-                        </a>
+
+                        <div>
+                            <a th:href="@{/stock/overview}"
+                               class="btn btn-secondary me-2">Back to Overview</a>
+
+                            <a th:href="@{/stock/delete/{id}(id=${transaction.id})}"
+                               class="btn btn-danger"
+                               onclick="return confirm('Are you sure you want to delete this transaction? This action cannot be undone.')">
+                                Delete Transaction
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-3 mt-5">
+    <div class="container">
+        <p>&copy; 2025 Inventory Management System. All rights reserved.</p>
+    </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

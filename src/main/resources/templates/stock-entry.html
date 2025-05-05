@@ -26,6 +26,25 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
         <a class="navbar-brand" href="#">Inventory System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/stock/entry">Stock Entry</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/stock/overview">Stock Overview</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/stock/adjustment">Stock Adjustment</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+            </ul>
+        </div>
     </div>
 </nav>
 
@@ -37,37 +56,53 @@
                     <h3 class="mb-0">Stock Entry</h3>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/stock/entry}" method="post">
+                    <!-- Error Message -->
+                    <div th:if="${errorMessage}" class="alert alert-danger">
+                        <span th:text="${errorMessage}">Error Message</span>
+                    </div>
+
+                    <!-- Success Message -->
+                    <div th:if="${successMessage}" class="alert alert-success">
+                        <span th:text="${successMessage}">Success Message</span>
+                    </div>
+
+                    <form th:action="@{/stock/entry}" method="post" id="stockEntryForm">
                         <div class="mb-3">
                             <label for="productId" class="form-label">Product ID</label>
                             <input type="text" class="form-control" id="productId" name="productId" required>
+                            <div class="invalid-feedback">Please enter a product ID.</div>
                         </div>
                         <div class="mb-3">
                             <label for="productName" class="form-label">Product Name</label>
                             <input type="text" class="form-control" id="productName" name="productName" required>
+                            <div class="invalid-feedback">Please enter a product name.</div>
                         </div>
                         <div class="mb-3">
                             <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="quantity" name="quantity" required>
+                            <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+                            <div class="invalid-feedback">Quantity must be greater than zero.</div>
                         </div>
                         <div class="mb-3">
                             <label for="transactionType" class="form-label">Transaction Type</label>
                             <select class="form-select" id="transactionType" name="transactionType" required>
-                                <option th:each="type : ${T(com.example.inventorysystem.models.StockTransaction.TransactionType).values()}"
+                                <option th:each="type : ${transactionTypes}"
                                         th:value="${type}"
                                         th:text="${type}">
                                 </option>
                             </select>
+                            <div class="invalid-feedback">Please select a transaction type.</div>
                         </div>
                         <div class="mb-3">
                             <label for="userId" class="form-label">User ID</label>
                             <input type="text" class="form-control" id="userId" name="userId" required>
+                            <div class="invalid-feedback">Please enter a user ID.</div>
                         </div>
                         <div class="mb-3">
                             <label for="notes" class="form-label">Notes (Optional)</label>
                             <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit Stock Entry</button>
+                        <a href="/" class="btn btn-secondary">Cancel</a>
                     </form>
                 </div>
             </div>
@@ -76,5 +111,56 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('stockEntryForm');
+
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Get form fields
+            const productId = document.getElementById('productId');
+            const productName = document.getElementById('productName');
+            const quantity = document.getElementById('quantity');
+            const userId = document.getElementById('userId');
+
+            // Validate Product ID
+            if (!productId.value.trim()) {
+                productId.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                productId.classList.remove('is-invalid');
+            }
+
+            // Validate Product Name
+            if (!productName.value.trim()) {
+                productName.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                productName.classList.remove('is-invalid');
+            }
+
+            // Validate Quantity
+            if (!quantity.value || parseInt(quantity.value) <= 0) {
+                quantity.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                quantity.classList.remove('is-invalid');
+            }
+
+            // Validate User ID
+            if (!userId.value.trim()) {
+                userId.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                userId.classList.remove('is-invalid');
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
 </body>
 </html>
